@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29326.143
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InputInterceptor", "InputInterceptor\InputInterceptor.csproj", "{B37B64C0-7FEA-4746-A5DD-B94CDEDA11CF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B37B64C0-7FEA-4746-A5DD-B94CDEDA11CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B37B64C0-7FEA-4746-A5DD-B94CDEDA11CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B37B64C0-7FEA-4746-A5DD-B94CDEDA11CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B37B64C0-7FEA-4746-A5DD-B94CDEDA11CF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A4CD0998-EB0E-4B8A-A567-D6062EDC885C}
+	EndGlobalSection
+EndGlobal
