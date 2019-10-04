@@ -23,7 +23,8 @@ namespace InputInterceptorNS {
         public static Precedence GetPrecedence(Context context, Device device) => DllWrapper.GetPrecedence(context, device);
         public static void SetPrecedence(Context context, Device device, Precedence precedence) => DllWrapper.SetPrecedence(context, device, precedence);
         public static Filter GetFilter(Context context, Device device) => DllWrapper.GetFilter(context, device);
-        public static void SetFilter(Context context, Predicate interception_predicate, Filter filter) => DllWrapper.SetFilter(context, interception_predicate, filter);
+        public static void SetFilter(Context context, Predicate interception_predicate, KeyboardFilterMode filter) => DllWrapper.SetFilter(context, interception_predicate, (UInt16)filter);
+        public static void SetFilter(Context context, Predicate interception_predicate, MouseFilterMode filter) => DllWrapper.SetFilter(context, interception_predicate, (UInt16)filter);
         public static Device Wait(Context context) => DllWrapper.Wait(context);
         public static Device WaitWithTimeout(Context context, UInt64 milliseconds) => DllWrapper.WaitWithTimeout(context, milliseconds);
         public static Int32 Send(Context context, Device device, ref Stroke stroke, UInt32 nstroke) => DllWrapper.Send(context, device, ref stroke, nstroke);
@@ -40,11 +41,12 @@ namespace InputInterceptorNS {
 
         public static Boolean Initialize() {
             try {
-                Byte[] DllBytes = Environment.Is64BitOperatingSystem ? Resources.interception_x64 : Resources.interception_x86;
+                Byte[] DllBytes = Environment.Is64BitProcess ? Resources.interception_x64 : Resources.interception_x86;
                 DllWrapper = new DllWrapper(DllBytes);
                 NeedDispose = true;
                 return true;
-            } catch {
+            } catch (Exception exception) {
+                Console.WriteLine(exception);
                 return false;
             }
         }
@@ -54,7 +56,8 @@ namespace InputInterceptorNS {
                 DllWrapper.Dispose();
                 NeedDispose = false;
                 return true;
-            } catch {
+            } catch (Exception exception) {
+                Console.WriteLine(exception);
                 return false;
             }
         }
@@ -87,7 +90,9 @@ namespace InputInterceptorNS {
                     process.Start();
                     process.WaitForExit();
                     result = process.ExitCode == 0;
-                } catch { }
+                } catch (Exception exception) {
+                    Console.WriteLine(exception);
+                }
                 try {
                     File.Delete(randomTempFileName);
                 } catch { }

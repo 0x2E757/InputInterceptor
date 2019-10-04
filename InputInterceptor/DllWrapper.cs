@@ -50,8 +50,8 @@ namespace InputInterceptorNS {
         }
 
         private TDelegate GetFunction<TDelegate>(String procedureName) where TDelegate : Delegate {
-            IntPtr addressOfFunctionToCallPointer = NativeMethods.GetProcAddress(this.DllPointer, procedureName);
-            return (TDelegate)Marshal.GetDelegateForFunctionPointer(addressOfFunctionToCallPointer, typeof(TDelegate));
+            IntPtr procedureAddress = NativeMethods.GetProcAddress(this.DllPointer, procedureName);
+            return (TDelegate)Marshal.GetDelegateForFunctionPointer(procedureAddress, typeof(TDelegate));
         }
 
     }
