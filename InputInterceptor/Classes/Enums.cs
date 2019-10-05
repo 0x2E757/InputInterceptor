@@ -113,20 +113,20 @@ namespace InputInterceptorNS {
         E1 = 0x04,
         TermsrvSetLED = 0x08,
         TermsrvShadow = 0x10,
-        TermsrvVKPacket = 0x20
+        TermsrvVKPacket = 0x20,
     }
 
     [Flags]
-    public enum KeyboardFilterMode : UInt16 {
+    public enum KeyboardFilter : UInt16 {
         None = 0x0000,
         All = 0xFFFF,
-        KeyDown = KeyState.Up,
-        KeyUp = KeyState.Up << 1,
-        KeyE0 = KeyState.E0 << 1,
-        KeyE1 = KeyState.E1 << 1,
-        KeyTermsrvSetLED = KeyState.TermsrvSetLED << 1,
-        KeyTermsrvShadow = KeyState.TermsrvShadow << 1,
-        KeyTermsrvVKPacket = KeyState.TermsrvVKPacket << 1
+        KeyDown = 0x01,
+        KeyUp = 0x02,
+        KeyE0 = 0x04,
+        KeyE1 = 0x08,
+        KeyTermsrvSetLED = 0x10,
+        KeyTermsrvShadow = 0x20,
+        KeyTermsrvVKPacket = 0x40,
     }
 
     [Flags]
@@ -150,7 +150,7 @@ namespace InputInterceptorNS {
     }
 
     [Flags]
-    public enum MouseFilterMode : UInt16 {
+    public enum MouseFilter : UInt16 {
         None = 0x0000,
         All = 0xFFFF,
         LeftDown = 0x01,
@@ -175,7 +175,7 @@ namespace InputInterceptorNS {
         VirtualDesktop = 0x002,
         AttributesChanged = 0x004,
         MoveWithoutCoalescing = 0x008,
-        TerminalServicesSourceShadow = 0x100
+        TerminalServicesSourceShadow = 0x100,
     }
 
 }

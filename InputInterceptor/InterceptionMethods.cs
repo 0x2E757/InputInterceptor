@@ -9,7 +9,7 @@ using Precedence = System.Int32;
 namespace InputInterceptorNS {
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate Int32 Predicate(Device device);
+    public delegate Boolean Predicate(Device device);
 
     internal class InterceptionMethods {
 

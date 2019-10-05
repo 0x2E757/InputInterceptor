@@ -9,20 +9,20 @@ namespace InputInterceptorNS {
         private readonly String DllTempName;
         private readonly IntPtr DllPointer;
 
-        public InterceptionMethods.CreateContext CreateContext;
-        public InterceptionMethods.DestroyContext DestroyContext;
-        public InterceptionMethods.GetPrecedence GetPrecedence;
-        public InterceptionMethods.SetPrecedence SetPrecedence;
-        public InterceptionMethods.GetFilter GetFilter;
-        public InterceptionMethods.SetFilter SetFilter;
-        public InterceptionMethods.Wait Wait;
-        public InterceptionMethods.WaitWithTimeout WaitWithTimeout;
-        public InterceptionMethods.Send Send;
-        public InterceptionMethods.Receive Receive;
-        public InterceptionMethods.GetHardwareId GetHardwareId;
-        public InterceptionMethods.IsInvalid IsInvalid;
-        public InterceptionMethods.IsKeyboard IsKeyboard;
-        public InterceptionMethods.IsMouse IsMouse;
+        public readonly InterceptionMethods.CreateContext CreateContext;
+        public readonly InterceptionMethods.DestroyContext DestroyContext;
+        public readonly InterceptionMethods.GetPrecedence GetPrecedence;
+        public readonly InterceptionMethods.SetPrecedence SetPrecedence;
+        public readonly InterceptionMethods.GetFilter GetFilter;
+        public readonly InterceptionMethods.SetFilter SetFilter;
+        public readonly InterceptionMethods.Wait Wait;
+        public readonly InterceptionMethods.WaitWithTimeout WaitWithTimeout;
+        public readonly InterceptionMethods.Send Send;
+        public readonly InterceptionMethods.Receive Receive;
+        public readonly InterceptionMethods.GetHardwareId GetHardwareId;
+        public readonly InterceptionMethods.IsInvalid IsInvalid;
+        public readonly InterceptionMethods.IsKeyboard IsKeyboard;
+        public readonly InterceptionMethods.IsMouse IsMouse;
 
         public DllWrapper(Byte[] DllBytes) {
             this.DllTempName = Path.GetTempFileName();

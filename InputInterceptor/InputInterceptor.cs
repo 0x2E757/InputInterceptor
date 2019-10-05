@@ -16,23 +16,24 @@ namespace InputInterceptorNS {
 
         private static DllWrapper DllWrapper;
 
-        public static Boolean NeedDispose;
+        public static Boolean NeedDispose { get; private set; }
 
         public static Context CreateContext() => DllWrapper.CreateContext();
         public static void DestroyContext(Context context) => DllWrapper.DestroyContext(context);
         public static Precedence GetPrecedence(Context context, Device device) => DllWrapper.GetPrecedence(context, device);
         public static void SetPrecedence(Context context, Device device, Precedence precedence) => DllWrapper.SetPrecedence(context, device, precedence);
         public static Filter GetFilter(Context context, Device device) => DllWrapper.GetFilter(context, device);
-        public static void SetFilter(Context context, Predicate interception_predicate, KeyboardFilterMode filter) => DllWrapper.SetFilter(context, interception_predicate, (UInt16)filter);
-        public static void SetFilter(Context context, Predicate interception_predicate, MouseFilterMode filter) => DllWrapper.SetFilter(context, interception_predicate, (UInt16)filter);
+        public static void SetFilter(Context context, Predicate interception_predicate, KeyboardFilter filter) => DllWrapper.SetFilter(context, interception_predicate, (Filter)filter);
+        public static void SetFilter(Context context, Predicate interception_predicate, MouseFilter filter) => DllWrapper.SetFilter(context, interception_predicate, (Filter)filter);
+        public static void SetFilter(Context context, Predicate interception_predicate, Filter filter) => DllWrapper.SetFilter(context, interception_predicate, filter);
         public static Device Wait(Context context) => DllWrapper.Wait(context);
         public static Device WaitWithTimeout(Context context, UInt64 milliseconds) => DllWrapper.WaitWithTimeout(context, milliseconds);
         public static Int32 Send(Context context, Device device, ref Stroke stroke, UInt32 nstroke) => DllWrapper.Send(context, device, ref stroke, nstroke);
         public static Int32 Receive(Context context, Device device, ref Stroke stroke, UInt32 nstroke) => DllWrapper.Receive(context, device, ref stroke, nstroke);
         public static UInt32 GetHardwareId(Context context, Device device, String hardware_id_buffer, UInt32 buffer_size) => DllWrapper.GetHardwareId(context, device, hardware_id_buffer, buffer_size);
-        public static Int32 IsInvalid(Device device) => DllWrapper.IsInvalid(device);
-        public static Int32 IsKeyboard(Device device) => DllWrapper.IsKeyboard(device);
-        public static Int32 IsMouse(Device device) => DllWrapper.IsMouse(device);
+        public static Boolean IsInvalid(Device device) => DllWrapper.IsInvalid(device) != 0;
+        public static Boolean IsKeyboard(Device device) => DllWrapper.IsKeyboard(device) != 0;
+        public static Boolean IsMouse(Device device) => DllWrapper.IsMouse(device) != 0;
 
         static InputInterceptor() {
             DllWrapper = null;
@@ -62,7 +63,7 @@ namespace InputInterceptorNS {
             }
         }
 
-        public static Boolean CheckInterceptorInstalled() {
+        public static Boolean CheckInstalled() {
             RegistryKey baseRegistryKey = Registry.LocalMachine.OpenSubKey("SYSTEM").OpenSubKey("CurrentControlSet").OpenSubKey("Services");
             RegistryKey keyboardRegistryKey = baseRegistryKey.OpenSubKey("keyboard");
             RegistryKey mouseRegistryKey = baseRegistryKey.OpenSubKey("mouse");
@@ -76,15 +77,15 @@ namespace InputInterceptorNS {
             return new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator) ? true : false;
         }
 
-        public static Boolean InstallInterceptor() {
+        public static Boolean Install() {
             Boolean result = false;
-            if (CheckAdministratorRights() && !CheckInterceptorInstalled()) {
+            if (CheckAdministratorRights() && !CheckInstalled()) {
                 String randomTempFileName = Path.GetTempFileName();
                 File.WriteAllBytes(randomTempFileName, Resources.install_interception);
                 try {
                     Process process = new Process();
                     process.StartInfo.FileName = randomTempFileName;
-                    process.StartInfo.Arguments += "/install";
+                    process.StartInfo.Arguments = "/install";
                     process.StartInfo.UseShellExecute = false;
                     process.StartInfo.CreateNoWindow = true;
                     process.Start();
