@@ -33,12 +33,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Enums.cs" />
     <Compile Include="Classes\Hook.cs" />
     <Compile Include="Classes\KeyStroke.cs" />
     <Compile Include="Classes\MouseStroke.cs" />
+    <Compile Include="Classes\Win32Point.cs" />
     <Compile Include="Classes\Stroke.cs" />
     <Compile Include="DllWrapper.cs" />
     <Compile Include="InputInterceptor.cs" />

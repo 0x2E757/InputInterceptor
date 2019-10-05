@@ -44,9 +44,11 @@ namespace InputInterceptorNS {
 
         private void Main() {
             InputInterceptor.SetFilter(this.Context, this.Predicate, this.FilterMode);
+            Device device;
             Stroke stroke = new Stroke();
             while (this.Active) {
-                if (InputInterceptor.Receive(this.Context, this.Device = InputInterceptor.WaitWithTimeout(this.Context, 100), ref stroke, 1) > 0) {
+                if (InputInterceptor.Receive(this.Context, device = InputInterceptor.WaitWithTimeout(this.Context, 100), ref stroke, 1) > 0) {
+                    this.Device = device;
                     if (this.Callback != null && this.Active) {
                         try {
                             this.CallbackWrapper(ref stroke);
@@ -58,7 +60,7 @@ namespace InputInterceptorNS {
                     } else {
                         this.Active = false;
                     }
-                    InputInterceptor.Send(this.Context, this.Device, ref stroke, 1);
+                    InputInterceptor.Send(this.Context, device, ref stroke, 1);
                 }
             }
             if (this.Callback == null) {
