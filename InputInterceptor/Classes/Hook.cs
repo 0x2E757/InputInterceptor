@@ -9,20 +9,27 @@ namespace InputInterceptorNS {
 
     public abstract class Hook<TCallbackStroke> : IDisposable {
 
+        public delegate void CallbackAction(ref TCallbackStroke stroke);
+
         public Context Context { get; private set; }
         public Device Device { get; private set; }
         public Filter FilterMode { get; private set; }
         public Predicate Predicate { get; private set; }
-        public Action<TCallbackStroke> Callback { get; private set; }
+        public CallbackAction Callback { get; private set; }
+        public Exception Exception { get; private set; }
         public Boolean Active { get; private set; }
         public Thread InterceptionThread { get; private set; }
 
-        public Hook(Filter filterMode, Predicate predicate, Action<TCallbackStroke> callback) {
+        public Boolean IsInitialized { get => this.Context != IntPtr.Zero && this.Device != -1; }
+        public Boolean HasException { get => this.Exception != null; }
+
+        public Hook(Filter filterMode, Predicate predicate, CallbackAction callback) {
             this.Context = InputInterceptor.CreateContext();
             this.Device = -1;
             this.FilterMode = filterMode;
             this.Predicate = predicate;
             this.Callback = callback;
+            this.Exception = null;
             if (this.Context != IntPtr.Zero) {
                 this.Active = true;
                 this.InterceptionThread = new Thread(this.Main);
@@ -42,9 +49,10 @@ namespace InputInterceptorNS {
                 if (InputInterceptor.Receive(this.Context, this.Device = InputInterceptor.WaitWithTimeout(this.Context, 100), ref stroke, 1) > 0) {
                     if (this.Callback != null && this.Active) {
                         try {
-                            this.CallbackWrapper(stroke);
+                            this.CallbackWrapper(ref stroke);
                         } catch (Exception exception) {
                             Console.WriteLine(exception);
+                            this.Exception = exception;
                             this.Active = false;
                         }
                     } else {
@@ -59,13 +67,16 @@ namespace InputInterceptorNS {
             }
         }
 
-        protected abstract void CallbackWrapper(Stroke stroke);
+        protected abstract void CallbackWrapper(ref Stroke stroke);
 
         public void Dispose() {
-            if (this.Active) {
-                this.Active = false;
-                this.InterceptionThread.Join();
+            if (this.Context != IntPtr.Zero) {
+                if (this.Active) {
+                    this.Active = false;
+                    this.InterceptionThread.Join();
+                }
                 InputInterceptor.DestroyContext(this.Context);
+                this.Context = IntPtr.Zero;
             }
         }
 

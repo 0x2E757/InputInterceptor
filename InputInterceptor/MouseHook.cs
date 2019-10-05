@@ -1,19 +1,17 @@
-﻿using System;
-
-using Filter = System.UInt16;
+﻿using Filter = System.UInt16;
 
 namespace InputInterceptorNS {
 
     public class MouseHook : Hook<MouseStroke> {
 
-        public MouseHook(MouseFilter filter = MouseFilter.All, Action<MouseStroke> callback = null) :
+        public MouseHook(MouseFilter filter = MouseFilter.All, CallbackAction callback = null) :
             base((Filter)filter, InputInterceptor.IsMouse, callback) { }
 
-        public MouseHook(Action<MouseStroke> callback) :
+        public MouseHook(CallbackAction callback) :
             base((Filter)MouseFilter.All, InputInterceptor.IsMouse, callback) { }
 
-        protected override void CallbackWrapper(Stroke stroke) {
-            this.Callback(stroke.Mouse);
+        protected override void CallbackWrapper(ref Stroke stroke) {
+            this.Callback(ref stroke.Mouse);
         }
 
     }
