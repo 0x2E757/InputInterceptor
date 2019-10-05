@@ -20,7 +20,7 @@ namespace InputInterceptorNS {
         public Boolean Active { get; private set; }
         public Thread InterceptionThread { get; private set; }
 
-        public Boolean IsInitialized { get => this.Context != IntPtr.Zero && this.Device != -1; }
+        public Boolean IsInitialized { get => this.Context != Context.Zero && this.Device != -1; }
         public Boolean HasException { get => this.Exception != null; }
 
         public Hook(Filter filterMode, Predicate predicate, CallbackAction callback) {
@@ -70,13 +70,13 @@ namespace InputInterceptorNS {
         protected abstract void CallbackWrapper(ref Stroke stroke);
 
         public void Dispose() {
-            if (this.Context != IntPtr.Zero) {
+            if (this.Context != Context.Zero) {
                 if (this.Active) {
                     this.Active = false;
                     this.InterceptionThread.Join();
                 }
                 InputInterceptor.DestroyContext(this.Context);
-                this.Context = IntPtr.Zero;
+                this.Context = Context.Zero;
             }
         }
 

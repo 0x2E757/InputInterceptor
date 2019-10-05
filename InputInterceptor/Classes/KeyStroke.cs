@@ -10,6 +10,7 @@ namespace InputInterceptorNS {
         public KeyState State;
 
         public UInt32 Information;
+
     }
 
 }
