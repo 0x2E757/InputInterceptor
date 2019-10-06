@@ -63,7 +63,7 @@ namespace InputInterceptorNS {
             }
         }
 
-        public static Boolean CheckInstalled() {
+        public static Boolean CheckDriverInstalled() {
             RegistryKey baseRegistryKey = Registry.LocalMachine.OpenSubKey("SYSTEM").OpenSubKey("CurrentControlSet").OpenSubKey("Services");
             RegistryKey keyboardRegistryKey = baseRegistryKey.OpenSubKey("keyboard");
             RegistryKey mouseRegistryKey = baseRegistryKey.OpenSubKey("mouse");
@@ -77,9 +77,9 @@ namespace InputInterceptorNS {
             return new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator) ? true : false;
         }
 
-        public static Boolean Install() {
+        public static Boolean InstallDriver() {
             Boolean result = false;
-            if (CheckAdministratorRights() && !CheckInstalled()) {
+            if (CheckAdministratorRights() && !CheckDriverInstalled()) {
                 String randomTempFileName = Path.GetTempFileName();
                 File.WriteAllBytes(randomTempFileName, Resources.install_interception);
                 try {

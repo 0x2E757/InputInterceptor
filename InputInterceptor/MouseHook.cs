@@ -59,11 +59,11 @@ namespace InputInterceptorNS {
             return this.SimulateButtonClick(MouseState.RightButtonDown, MouseState.RightButtonUp, delay);
         }
 
-        public Boolean ScrollDown(Int16 rolling = 120) {
+        public Boolean SimulateScrollDown(Int16 rolling = 120) {
             return this.SetMouseState(MouseState.ScrollVertical, (Int16)(-rolling));
         }
 
-        public Boolean ScrollUp(Int16 rolling = 120) {
+        public Boolean SimulateScrollUp(Int16 rolling = 120) {
             return this.SetMouseState(MouseState.ScrollVertical, rolling);
         }
 
