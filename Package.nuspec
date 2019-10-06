@@ -2,11 +2,11 @@
 <package>
   <metadata>
     <id>InputInterceptor</id>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <authors>0x2E757</authors>
     <owners>0x2E757</owners>
     <licenseUrl>https://github.com/0x2E757/InputInterceptor/blob/master/LICENSE</licenseUrl>
-    <projectUrl>https://github.com/0x2E757/InputInterceptor</projectUrl>
+    <repository type="git" url="https://github.com/0x2E757/InputInterceptor.git" branch="master" />
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Library for keyboard and mouse input interception and simulation</description>
     <copyright>Copyright 2019</copyright>
