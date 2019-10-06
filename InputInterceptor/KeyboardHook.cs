@@ -138,19 +138,19 @@ namespace InputInterceptorNS {
             return false;
         }
 
-        private Boolean SimulateKeyPress(KeyCode code, KeyState firstState, KeyState secondState, Int32 delay) {
+        private Boolean SimulateKeyPress(KeyCode code, KeyState firstState, KeyState secondState, Int32 releaseDelay) {
             if (this.SetKeyState(code, firstState)) {
-                Thread.Sleep(delay);
+                Thread.Sleep(releaseDelay);
                 return this.SetKeyState(code, secondState);
             }
             return false;
         }
 
-        public Boolean SimulateKeyPress(KeyCode code, Int32 delay = 75) {
-            return this.SimulateKeyPress(code, KeyState.Down, KeyState.Up, delay);
+        public Boolean SimulateKeyPress(KeyCode code, Int32 releaseDelay = 75) {
+            return this.SimulateKeyPress(code, KeyState.Down, KeyState.Up, releaseDelay);
         }
 
-        public Boolean SimulateInput(String text, Int32 delayBetweenKeyPresses = 100) {
+        public Boolean SimulateInput(String text, Int32 delayBetweenKeyPresses = 100, Int32 releaseDelay = 75) {
             Boolean shiftDown = false;
             foreach (Char letter in text) {
                 KeyData keyData;
@@ -164,7 +164,7 @@ namespace InputInterceptorNS {
                     Thread.Sleep(delayBetweenKeyPresses / 2);
                     shiftDown = keyData.Shift;
                 }
-                if (this.SimulateKeyPress(keyData.Code) == false) return false;
+                if (this.SimulateKeyPress(keyData.Code, releaseDelay) == false) return false;
                 Thread.Sleep(delayBetweenKeyPresses);
             }
             if (shiftDown) {

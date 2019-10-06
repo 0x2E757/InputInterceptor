@@ -20,9 +20,9 @@ public Boolean SetCursorPosition(Win32Point point, Boolean useWinAPI = false, Bo
 public Boolean SetCursorPosition(Int32 x, Int32 y, Boolean useWinAPI = false, Boolean useWinAPIOnly = false);
 public Boolean MoveCursorBy(Int32 dX, Int32 dY, Boolean useWinAPI = false, Boolean useWinAPIOnly = false);
 // Simulation methods
-public Boolean SimulateLeftButtonClick(Int32 delay = 50);
-public Boolean SimulateMiddleButtonClick(Int32 delay = 50);
-public Boolean SimulateRightButtonClick(Int32 delay = 50);
+public Boolean SimulateLeftButtonClick(Int32 releaseDelay = 50);
+public Boolean SimulateMiddleButtonClick(Int32 releaseDelay = 50);
+public Boolean SimulateRightButtonClick(Int32 releaseDelay = 50);
 public Boolean SimulateScrollDown(Int16 rolling = 120);
 public Boolean SimulateScrollUp(Int16 rolling = 120);
 public Boolean SimulateMoveTo(Win32Point point, Int32 speed = 15, Boolean useWinAPI = false, Boolean useWinAPIOnly = false);
@@ -38,8 +38,8 @@ public KeyboardHook(CallbackAction callback);
 // Base methods
 public Boolean SetKeyState(KeyCode code, KeyState state);
 // Simulation methods
-public Boolean SimulateKeyPress(KeyCode code, Int32 delay = 75);
-public Boolean SimulateInput(String text, Int32 delayBetweenKeyPresses = 100); // works with ANSI compatible string with english letters only (special chars are supported)
+public Boolean SimulateKeyPress(KeyCode code, Int32 releaseDelay = 75);
+public Boolean SimulateInput(String text, Int32 delayBetweenKeyPresses = 100, Int32 releaseDelay = 75); // works with ANSI compatible string with english letters only (special chars are supported)
 ```
 
 All functions returns `true` if operation succeeded. Also `Hook` derived classes contain base class properties:

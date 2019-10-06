@@ -39,24 +39,24 @@ namespace InputInterceptorNS {
             return false;
         }
 
-        private Boolean SimulateButtonClick(MouseState firstState, MouseState secondState, Int32 delay) {
+        private Boolean SimulateButtonClick(MouseState firstState, MouseState secondState, Int32 releaseDelay) {
             if (this.SetMouseState(firstState)) {
-                Thread.Sleep(delay);
+                Thread.Sleep(releaseDelay);
                 return this.SetMouseState(secondState);
             }
             return false;
         }
 
-        public Boolean SimulateLeftButtonClick(Int32 delay = 50) {
-            return this.SimulateButtonClick(MouseState.LeftButtonDown, MouseState.LeftButtonUp, delay);
+        public Boolean SimulateLeftButtonClick(Int32 releaseDelay = 50) {
+            return this.SimulateButtonClick(MouseState.LeftButtonDown, MouseState.LeftButtonUp, releaseDelay);
         }
 
-        public Boolean SimulateMiddleButtonClick(Int32 delay = 50) {
-            return this.SimulateButtonClick(MouseState.MiddleButtonDown, MouseState.MiddleButtonUp, delay);
+        public Boolean SimulateMiddleButtonClick(Int32 releaseDelay = 50) {
+            return this.SimulateButtonClick(MouseState.MiddleButtonDown, MouseState.MiddleButtonUp, releaseDelay);
         }
 
-        public Boolean SimulateRightButtonClick(Int32 delay = 50) {
-            return this.SimulateButtonClick(MouseState.RightButtonDown, MouseState.RightButtonUp, delay);
+        public Boolean SimulateRightButtonClick(Int32 releaseDelay = 50) {
+            return this.SimulateButtonClick(MouseState.RightButtonDown, MouseState.RightButtonUp, releaseDelay);
         }
 
         public Boolean SimulateScrollDown(Int16 rolling = 120) {
