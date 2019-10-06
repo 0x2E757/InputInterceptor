@@ -98,27 +98,68 @@ namespace InputInterceptorNS {
             return false;
         }
 
-        public Boolean MoveCursorBy(Int32 dx, Int32 dy, Boolean useWinAPI = false, Boolean useWinAPIOnly = false) {
+        public Boolean MoveCursorBy(Int32 dX, Int32 dY, Boolean useWinAPI = false, Boolean useWinAPIOnly = false) {
             if (useWinAPIOnly) {
                 if (useWinAPI) {
                     Win32Point point = this.GetCursorPosition();
-                    return NativeMethods.SetCursorPos(point.X + dx, point.Y + dy);
+                    return NativeMethods.SetCursorPos(point.X + dX, point.Y + dY);
                 }
             } else {
                 if (this.IsInitialized) {
                     Stroke stroke = new Stroke();
-                    stroke.Mouse.X = dx;
-                    stroke.Mouse.Y = dy;
+                    stroke.Mouse.X = dX;
+                    stroke.Mouse.Y = dY;
                     stroke.Mouse.Flags = MouseFlags.MoveRelative;
                     if (useWinAPI) {
                         Win32Point point = this.GetCursorPosition();
-                        return InputInterceptor.Send(this.Context, this.Device, ref stroke, 1) == 1 && NativeMethods.SetCursorPos(point.X + dx, point.Y + dy);
+                        return InputInterceptor.Send(this.Context, this.Device, ref stroke, 1) == 1 && NativeMethods.SetCursorPos(point.X + dX, point.Y + dY);
                     } else {
                         return InputInterceptor.Send(this.Context, this.Device, ref stroke, 1) == 1;
                     }
                 }
             }
             return false;
+        }
+
+        private Boolean SmoothMoveCursorBy(Win32Point startPosition, Int32 dX, Int32 dY, Int32 speed = 15, Boolean useWinAPI = false, Boolean useWinAPIOnly = false) {
+            if (this.IsInitialized == false) return false;
+            if (Math.Abs(dX) >= Math.Abs(dY)) {
+                Double k = (Double)dY / (Double)dX;
+                for (Int32 n = 0, nMax = Math.Abs(dX / speed); n <= nMax; n++) {
+                    if (this.SetCursorPosition(startPosition.X + n * dX / nMax, (Int32)(startPosition.Y + n * dX / nMax * k), useWinAPI, useWinAPIOnly) == false) return false;
+                    Thread.Sleep(10);
+                }
+            } else {
+                Double k = (Double)dX / (Double)dY;
+                for (Int32 n = 0, nMax = Math.Abs(dY / speed); n <= nMax; n++) {
+                    if (this.SetCursorPosition((Int32)(startPosition.X + n * dX / nMax * k), startPosition.Y + n * dX / nMax, useWinAPI, useWinAPIOnly) == false) return false;
+                    Thread.Sleep(10);
+                }
+            }
+            if (this.SetCursorPosition(startPosition.X + dX, startPosition.Y + dY, useWinAPI, useWinAPIOnly) == false) return false;
+            return true;
+        }
+
+        public Boolean SimulateMoveTo(Win32Point point, Int32 speed = 15, Boolean useWinAPI = false, Boolean useWinAPIOnly = false) {
+            if (this.IsInitialized == false) return false;
+            Win32Point startPosition = this.GetCursorPosition();
+            Int32 dX = point.X - startPosition.X;
+            Int32 dY = point.Y - startPosition.Y;
+            return this.SmoothMoveCursorBy(startPosition, dX, dY, speed, useWinAPI, useWinAPIOnly);
+        }
+
+        public Boolean SimulateMoveTo(Int32 x, Int32 y, Int32 speed = 15, Boolean useWinAPI = false, Boolean useWinAPIOnly = false) {
+            if (this.IsInitialized == false) return false;
+            Win32Point startPosition = this.GetCursorPosition();
+            Int32 dX = x - startPosition.X;
+            Int32 dY = y - startPosition.Y;
+            return this.SmoothMoveCursorBy(startPosition, dX, dY, speed, useWinAPI, useWinAPIOnly);
+        }
+
+        public Boolean SimulateMoveBy(Int32 dX, Int32 dY, Int32 speed = 15, Boolean useWinAPI = false, Boolean useWinAPIOnly = false) {
+            if (this.IsInitialized == false) return false;
+            Win32Point startPosition = this.GetCursorPosition();
+            return this.SmoothMoveCursorBy(startPosition, dX, dY, speed, useWinAPI, useWinAPIOnly);
         }
 
     }
