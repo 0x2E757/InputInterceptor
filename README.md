@@ -1,6 +1,6 @@
 # InputInterceptor
 
-Library for keyboard and mouse input interception and simulation. Based on [interception driver](http://www.oblita.com/interception.html). Library will work only if the driver is intalled, however library contains installer and the driver can be installed by `InputInterceptor.Install()` call.
+Library for keyboard and mouse input interception and simulation. Based on [interception driver](http://www.oblita.com/interception.html). Library will work only if the driver is intalled, however library contains installer and the driver can be installed by `InputInterceptor.Install()` call. Available as [NuGet package](https://www.nuget.org/packages/InputInterceptor/).
 
 ## Usage
 
