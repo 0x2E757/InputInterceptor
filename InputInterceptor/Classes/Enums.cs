@@ -118,8 +118,8 @@ namespace InputInterceptorNS {
 
     [Flags]
     public enum KeyboardFilter : UInt16 {
-        None = 0x0000,
-        All = 0xFFFF,
+        None = 0x00,
+        All = 0xFF,
         KeyDown = 0x01,
         KeyUp = 0x02,
         KeyE0 = 0x04,
