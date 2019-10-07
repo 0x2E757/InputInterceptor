@@ -87,11 +87,15 @@ namespace InputInterceptorNS {
 
         private void DeviceCaptureMain() {
             InputInterceptor.SetFilter(this.Context, this.Predicate, this.FilterMode);
+            Device device;
+            Stroke stroke = new Stroke();
             while (this.DeviceCaptureActive) {
-                Device device = InputInterceptor.WaitWithTimeout(this.Context, 100);
-                if (this.Predicate(device)) {
-                    this.Device = device;
-                    this.DeviceCaptureActive = false;
+                if (InputInterceptor.Receive(this.Context, device = InputInterceptor.WaitWithTimeout(this.Context, 100), ref stroke, 1) > 0) {
+                    if (this.Predicate(device)) {
+                        this.Device = device;
+                        this.DeviceCaptureActive = false;
+                    }
+                    InputInterceptor.Send(this.Context, device, ref stroke, 1);
                 }
             }
             InputInterceptor.DestroyContext(this.Context);
