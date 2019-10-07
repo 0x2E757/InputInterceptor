@@ -36,6 +36,7 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\DeviceData.cs" />
     <Compile Include="Classes\Enums.cs" />
     <Compile Include="Classes\Hook.cs" />
     <Compile Include="Classes\KeyStroke.cs" />

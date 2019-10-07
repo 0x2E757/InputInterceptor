@@ -129,11 +129,11 @@ namespace InputInterceptorNS {
         }
 
         public Boolean SetKeyState(KeyCode code, KeyState state) {
-            if (this.IsInitialized) {
+            if (this.CanSimulateInput) {
                 Stroke stroke = new Stroke();
                 stroke.Key.Code = code;
                 stroke.Key.State = state;
-                return InputInterceptor.Send(this.Context, this.Device, ref stroke, 1) == 1;
+                return InputInterceptor.Send(this.Context, this.AnyDevice, ref stroke, 1) == 1;
             }
             return false;
         }

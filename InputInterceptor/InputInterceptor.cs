@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Security.Principal;
 using InputInterceptorNS.Properties;
 using Microsoft.Win32;
@@ -30,7 +32,7 @@ namespace InputInterceptorNS {
         public static Device WaitWithTimeout(Context context, UInt64 milliseconds) => DllWrapper.WaitWithTimeout(context, milliseconds);
         public static Int32 Send(Context context, Device device, ref Stroke stroke, UInt32 nstroke) => DllWrapper.Send(context, device, ref stroke, nstroke);
         public static Int32 Receive(Context context, Device device, ref Stroke stroke, UInt32 nstroke) => DllWrapper.Receive(context, device, ref stroke, nstroke);
-        public static UInt32 GetHardwareId(Context context, Device device, String hardware_id_buffer, UInt32 buffer_size) => DllWrapper.GetHardwareId(context, device, hardware_id_buffer, buffer_size);
+        public static UInt32 GetHardwareId(Context context, Device device, IntPtr hardware_id_buffer, UInt32 buffer_size) => DllWrapper.GetHardwareId(context, device, hardware_id_buffer, buffer_size);
         public static Boolean IsInvalid(Device device) => DllWrapper.IsInvalid(device) != 0;
         public static Boolean IsKeyboard(Device device) => DllWrapper.IsKeyboard(device) != 0;
         public static Boolean IsMouse(Device device) => DllWrapper.IsMouse(device) != 0;
@@ -98,6 +100,27 @@ namespace InputInterceptorNS {
                     File.Delete(randomTempFileName);
                 } catch { }
             }
+            return result;
+        }
+
+        public static List<DeviceData> GetDeviceList(Predicate predicate = null) {
+            Context context = CreateContext();
+            List<DeviceData> result = GetDeviceList(context, predicate);
+            DestroyContext(context);
+            return result;
+        }
+
+        public static List<DeviceData> GetDeviceList(Context context, Predicate predicate = null) {
+            List<DeviceData> result = new List<DeviceData>();
+            Char[] buffer = new Char[1024];
+            GCHandle gcHandle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+            for (Device device = 1; device <= 20; device++) {
+                if (predicate == null ? IsInvalid(device) == false : predicate(device)) {
+                    UInt32 length = GetHardwareId(context, device, gcHandle.AddrOfPinnedObject(), (UInt32)buffer.Length);
+                    if (length > 0) result.Add(new DeviceData(device, new String(buffer, 0, (Int32)length)));
+                }
+            }
+            gcHandle.Free();
             return result;
         }
 

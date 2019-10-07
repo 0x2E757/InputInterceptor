@@ -44,7 +44,7 @@ namespace InputInterceptorNS {
         public delegate Int32 Receive(Context context, Device device, ref Stroke stroke, UInt32 nstroke);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate UInt32 GetHardwareId(Context context, Device device, String hardware_id_buffer, UInt32 buffer_size);
+        public delegate UInt32 GetHardwareId(Context context, Device device, IntPtr hardware_id_buffer, UInt32 buffer_size);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate Int32 IsInvalid(Device device);

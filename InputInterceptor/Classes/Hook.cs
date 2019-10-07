@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
 using Context = System.IntPtr;
@@ -13,6 +14,7 @@ namespace InputInterceptorNS {
 
         public Context Context { get; private set; }
         public Device Device { get; private set; }
+        public Device RandomDevice { get; private set; }
         public Filter FilterMode { get; private set; }
         public Predicate Predicate { get; private set; }
         public CallbackAction Callback { get; private set; }
@@ -21,16 +23,22 @@ namespace InputInterceptorNS {
         public Thread InterceptionThread { get; private set; }
 
         public Boolean IsInitialized { get => this.Context != Context.Zero && this.Device != -1; }
+        public Boolean CanSimulateInput { get => this.Context != Context.Zero && (this.RandomDevice != -1 || this.Device != -1); }
         public Boolean HasException { get => this.Exception != null; }
 
+        protected Device AnyDevice { get => this.Device != -1 ? this.Device : this.RandomDevice; }
+
         public Hook(Filter filterMode, Predicate predicate, CallbackAction callback) {
-            this.Context = InputInterceptor.CreateContext();
+            Context context = InputInterceptor.CreateContext();
+            List<DeviceData> devices = InputInterceptor.GetDeviceList(context, predicate);
+            this.Context = context;
             this.Device = -1;
+            this.RandomDevice = devices.Count > 0 ? devices[0].Device : -1;
             this.FilterMode = filterMode;
             this.Predicate = predicate;
             this.Callback = callback;
             this.Exception = null;
-            if (this.Context != IntPtr.Zero) {
+            if (this.Context != IntPtr.Zero && this.Callback != null) {
                 this.Active = true;
                 this.InterceptionThread = new Thread(this.Main);
                 this.InterceptionThread.Priority = ThreadPriority.Highest;
@@ -49,7 +57,7 @@ namespace InputInterceptorNS {
             while (this.Active) {
                 if (InputInterceptor.Receive(this.Context, device = InputInterceptor.WaitWithTimeout(this.Context, 100), ref stroke, 1) > 0) {
                     this.Device = device;
-                    if (this.Callback != null && this.Active) {
+                    if (this.Active) {
                         try {
                             this.CallbackWrapper(ref stroke);
                         } catch (Exception exception) {
@@ -62,10 +70,6 @@ namespace InputInterceptorNS {
                     }
                     InputInterceptor.Send(this.Context, device, ref stroke, 1);
                 }
-            }
-            if (this.Callback == null) {
-                InputInterceptor.DestroyContext(this.Context);
-                this.Context = InputInterceptor.CreateContext();
             }
         }
 

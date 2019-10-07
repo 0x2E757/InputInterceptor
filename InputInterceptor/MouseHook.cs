@@ -30,11 +30,11 @@ namespace InputInterceptorNS {
         }
 
         public Boolean SetMouseState(MouseState state, Int16 rolling = 0) {
-            if (this.IsInitialized) {
+            if (this.CanSimulateInput) {
                 Stroke stroke = new Stroke();
                 stroke.Mouse.State = state;
                 stroke.Mouse.Rolling = rolling;
-                return InputInterceptor.Send(this.Context, this.Device, ref stroke, 1) == 1;
+                return InputInterceptor.Send(this.Context, this.AnyDevice, ref stroke, 1) == 1;
             }
             return false;
         }
@@ -83,15 +83,15 @@ namespace InputInterceptorNS {
                     return NativeMethods.SetCursorPos(x, y);
                 }
             } else {
-                if (this.IsInitialized) {
+                if (this.CanSimulateInput) {
                     Stroke stroke = new Stroke();
                     stroke.Mouse.X = (Int32)((x - VirtualScreenOriginLeft) * (65535d / (VirtualScreenWidth - 1)));
                     stroke.Mouse.Y = (Int32)((y - VirtualScreenOriginTop) * (65535d / (VirtualScreenHeight - 1)));
                     stroke.Mouse.Flags = MouseFlags.MoveAbsolute;
                     if (useWinAPI) {
-                        return InputInterceptor.Send(this.Context, this.Device, ref stroke, 1) == 1 && NativeMethods.SetCursorPos(x, y);
+                        return InputInterceptor.Send(this.Context, this.AnyDevice, ref stroke, 1) == 1 && NativeMethods.SetCursorPos(x, y);
                     } else {
-                        return InputInterceptor.Send(this.Context, this.Device, ref stroke, 1) == 1;
+                        return InputInterceptor.Send(this.Context, this.AnyDevice, ref stroke, 1) == 1;
                     }
                 }
             }
@@ -105,16 +105,16 @@ namespace InputInterceptorNS {
                     return NativeMethods.SetCursorPos(point.X + dX, point.Y + dY);
                 }
             } else {
-                if (this.IsInitialized) {
+                if (this.CanSimulateInput) {
                     Stroke stroke = new Stroke();
                     stroke.Mouse.X = dX;
                     stroke.Mouse.Y = dY;
                     stroke.Mouse.Flags = MouseFlags.MoveRelative;
                     if (useWinAPI) {
                         Win32Point point = this.GetCursorPosition();
-                        return InputInterceptor.Send(this.Context, this.Device, ref stroke, 1) == 1 && NativeMethods.SetCursorPos(point.X + dX, point.Y + dY);
+                        return InputInterceptor.Send(this.Context, this.AnyDevice, ref stroke, 1) == 1 && NativeMethods.SetCursorPos(point.X + dX, point.Y + dY);
                     } else {
-                        return InputInterceptor.Send(this.Context, this.Device, ref stroke, 1) == 1;
+                        return InputInterceptor.Send(this.Context, this.AnyDevice, ref stroke, 1) == 1;
                     }
                 }
             }
@@ -122,7 +122,7 @@ namespace InputInterceptorNS {
         }
 
         private Boolean SmoothMoveCursorBy(Win32Point startPosition, Int32 dX, Int32 dY, Int32 speed = 15, Boolean useWinAPI = false, Boolean useWinAPIOnly = false) {
-            if (this.IsInitialized == false) return false;
+            if (this.CanSimulateInput == false) return false;
             if (Math.Abs(dX) >= Math.Abs(dY)) {
                 Double k = (Double)dY / (Double)dX;
                 for (Int32 n = 0, nMax = Math.Abs(dX / speed); n <= nMax; n++) {
@@ -141,7 +141,7 @@ namespace InputInterceptorNS {
         }
 
         public Boolean SimulateMoveTo(Win32Point point, Int32 speed = 15, Boolean useWinAPI = false, Boolean useWinAPIOnly = false) {
-            if (this.IsInitialized == false) return false;
+            if (this.CanSimulateInput == false) return false;
             Win32Point startPosition = this.GetCursorPosition();
             Int32 dX = point.X - startPosition.X;
             Int32 dY = point.Y - startPosition.Y;
@@ -149,7 +149,7 @@ namespace InputInterceptorNS {
         }
 
         public Boolean SimulateMoveTo(Int32 x, Int32 y, Int32 speed = 15, Boolean useWinAPI = false, Boolean useWinAPIOnly = false) {
-            if (this.IsInitialized == false) return false;
+            if (this.CanSimulateInput == false) return false;
             Win32Point startPosition = this.GetCursorPosition();
             Int32 dX = x - startPosition.X;
             Int32 dY = y - startPosition.Y;
@@ -157,7 +157,7 @@ namespace InputInterceptorNS {
         }
 
         public Boolean SimulateMoveBy(Int32 dX, Int32 dY, Int32 speed = 15, Boolean useWinAPI = false, Boolean useWinAPIOnly = false) {
-            if (this.IsInitialized == false) return false;
+            if (this.CanSimulateInput == false) return false;
             Win32Point startPosition = this.GetCursorPosition();
             return this.SmoothMoveCursorBy(startPosition, dX, dY, speed, useWinAPI, useWinAPIOnly);
         }
