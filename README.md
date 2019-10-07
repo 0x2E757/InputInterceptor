@@ -6,7 +6,7 @@ Library for keyboard and mouse input interception and simulation. Based on [inte
 
 You are able to use static `InputInterceptor` class to interact with the driver in the same way as shown in the driver [examples](http://www.oblita.com/interception.html).
 
-Library also contains `Hook` classes — `KeyboardHook` and `MouseHook`, which will do most of the work for you. They will intercept input and might simulate input. Note, that input simulation might not work right if device wasn't captured (random keyboard/mouse device will be used).
+Library also contains `Hook` classes — `KeyboardHook` and `MouseHook`, which will do most of the work for you. They will intercept input and might simulate input. Note, that input simulation might not work right if device wasn't captured (random keyboard/mouse device will be used). Even if hook doesn't recieve callback it will capture device with first input by this device.
 
 MouseHook:
 ```C#
