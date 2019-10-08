@@ -126,14 +126,14 @@ namespace InputInterceptorNS {
             if (dX == 0 && dY == 0) return true;
             if (Math.Abs(dX) >= Math.Abs(dY)) {
                 Double k = (Double)dY / (Double)dX;
-                for (Int32 n = 0, nMax = Math.Abs(dX / speed); n <= nMax; n++) {
+                for (Int32 n = 0, nMax = Math.Abs(dX / speed); n < nMax; n++) {
                     if (this.SetCursorPosition(startPosition.X + n * dX / nMax, (Int32)(startPosition.Y + n * dX / nMax * k), useWinAPI, useWinAPIOnly) == false) return false;
                     Thread.Sleep(10);
                 }
             } else {
                 Double k = (Double)dX / (Double)dY;
-                for (Int32 n = 0, nMax = Math.Abs(dY / speed); n <= nMax; n++) {
-                    if (this.SetCursorPosition((Int32)(startPosition.X + n * dX / nMax * k), startPosition.Y + n * dX / nMax, useWinAPI, useWinAPIOnly) == false) return false;
+                for (Int32 n = 0, nMax = Math.Abs(dY / speed); n < nMax; n++) {
+                    if (this.SetCursorPosition((Int32)(startPosition.X + n * dY / nMax * k), startPosition.Y + n * dY / nMax, useWinAPI, useWinAPIOnly) == false) return false;
                     Thread.Sleep(10);
                 }
             }
