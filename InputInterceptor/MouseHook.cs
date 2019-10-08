@@ -124,15 +124,15 @@ namespace InputInterceptorNS {
         private Boolean SmoothMoveCursorBy(Win32Point startPosition, Int32 dX, Int32 dY, Int32 speed = 15, Boolean useWinAPI = false, Boolean useWinAPIOnly = false) {
             if (this.CanSimulateInput == false) return false;
             if (Math.Abs(dX) >= Math.Abs(dY)) {
-                Double k = (Double)dY / (Double)dX;
+                Double k = (Double)dY / Math.Max((Double)dX, 1);
                 for (Int32 n = 0, nMax = Math.Abs(dX / speed); n <= nMax; n++) {
-                    if (this.SetCursorPosition(startPosition.X + n * dX / nMax, (Int32)(startPosition.Y + n * dX / nMax * k), useWinAPI, useWinAPIOnly) == false) return false;
+                    if (this.SetCursorPosition(startPosition.X + n * dX / nMax, (Int32)(startPosition.Y + n * dX / Math.Max(nMax, 1) * k), useWinAPI, useWinAPIOnly) == false) return false;
                     Thread.Sleep(10);
                 }
             } else {
-                Double k = (Double)dX / (Double)dY;
+                Double k = (Double)dX / Math.Max((Double)dY, 1);
                 for (Int32 n = 0, nMax = Math.Abs(dY / speed); n <= nMax; n++) {
-                    if (this.SetCursorPosition((Int32)(startPosition.X + n * dX / nMax * k), startPosition.Y + n * dX / nMax, useWinAPI, useWinAPIOnly) == false) return false;
+                    if (this.SetCursorPosition((Int32)(startPosition.X + n * dX / Math.Max(nMax, 1) * k), startPosition.Y + n * dX / nMax, useWinAPI, useWinAPIOnly) == false) return false;
                     Thread.Sleep(10);
                 }
             }
