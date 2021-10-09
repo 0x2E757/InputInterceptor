@@ -149,7 +149,14 @@ namespace InputInterceptorNS {
         public Boolean SimulateKeyPress(KeyCode code, Int32 releaseDelay = 75) {
             return this.SimulateKeyPress(code, KeyState.Down, KeyState.Up, releaseDelay);
         }
-
+        public Boolean SimulateKeyDown(KeyCode code)
+        {
+            return this.SetKeyState(code, KeyState.Down);
+        }
+        public Boolean SimulateKeyUp(KeyCode code)
+        {
+            return this.SetKeyState(code, KeyState.Up);
+        }
         public Boolean SimulateInput(String text, Int32 delayBetweenKeyPresses = 100, Int32 releaseDelay = 75) {
             Boolean shiftDown = false;
             foreach (Char letter in text) {
