@@ -50,13 +50,38 @@ namespace InputInterceptorNS {
         public Boolean SimulateLeftButtonClick(Int32 releaseDelay = 50) {
             return this.SimulateButtonClick(MouseState.LeftButtonDown, MouseState.LeftButtonUp, releaseDelay);
         }
+        public Boolean SimulateLeftButtonDown()
+        {
+            return this.SetMouseState(MouseState.LeftButtonDown);
+        }
+        public Boolean SimulateLeftButtonUp()
+        {
+            return this.SetMouseState(MouseState.LeftButtonUp);
+        }
 
         public Boolean SimulateMiddleButtonClick(Int32 releaseDelay = 50) {
             return this.SimulateButtonClick(MouseState.MiddleButtonDown, MouseState.MiddleButtonUp, releaseDelay);
         }
 
+        public Boolean SimulateMiddleButtonDown()
+        {
+            return this.SetMouseState(MouseState.MiddleButtonDown);
+        }
+        public Boolean SimulateMiddleButtonUp()
+        {
+            return this.SetMouseState(MouseState.MiddleButtonUp);
+        }
+
         public Boolean SimulateRightButtonClick(Int32 releaseDelay = 50) {
             return this.SimulateButtonClick(MouseState.RightButtonDown, MouseState.RightButtonUp, releaseDelay);
+        }
+        public Boolean SimulateRightButtonDown()
+        {
+            return this.SetMouseState(MouseState.RightButtonDown);
+        }
+        public Boolean SimulateRightButtonUp()
+        {
+            return this.SetMouseState(MouseState.RightButtonUp);
         }
 
         public Boolean SimulateScrollDown(Int16 rolling = 120) {
