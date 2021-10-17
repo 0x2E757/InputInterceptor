@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace InputInterceptorNS {
 
-    internal class DllWrapper {
+    internal class DllWrapper : IDisposable {
 
         private readonly String DllTempName;
         private readonly IntPtr DllPointer;
@@ -24,6 +24,8 @@ namespace InputInterceptorNS {
         public readonly InterceptionMethods.IsKeyboard IsKeyboard;
         public readonly InterceptionMethods.IsMouse IsMouse;
 
+        public Boolean Disposed;
+
         public DllWrapper(Byte[] DllBytes) {
             this.DllTempName = Path.GetTempFileName();
             File.WriteAllBytes(this.DllTempName, DllBytes);
@@ -42,16 +44,24 @@ namespace InputInterceptorNS {
             this.IsInvalid = this.GetFunction<InterceptionMethods.IsInvalid>("interception_is_invalid");
             this.IsKeyboard = this.GetFunction<InterceptionMethods.IsKeyboard>("interception_is_keyboard");
             this.IsMouse = this.GetFunction<InterceptionMethods.IsMouse>("interception_is_mouse");
+            this.Disposed = false;
+        }
+
+        ~DllWrapper() {
+            this.Dispose();
         }
 
         public void Dispose() {
-            NativeMethods.FreeLibrary(this.DllPointer);
-            File.Delete(this.DllTempName);
+            if (!this.Disposed) {
+                NativeMethods.FreeLibrary(this.DllPointer);
+                File.Delete(this.DllTempName);
+                this.Disposed = true;
+            }
         }
 
-        private TDelegate GetFunction<TDelegate>(String procedureName) where TDelegate : Delegate {
+        private TDelegate GetFunction<TDelegate>(String procedureName) {
             IntPtr procedureAddress = NativeMethods.GetProcAddress(this.DllPointer, procedureName);
-            return (TDelegate)Marshal.GetDelegateForFunctionPointer(procedureAddress, typeof(TDelegate));
+            return Marshal.GetDelegateForFunctionPointer<TDelegate>(procedureAddress);
         }
 
     }

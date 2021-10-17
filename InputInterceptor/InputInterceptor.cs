@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
-using InputInterceptorNS.Properties;
 using Microsoft.Win32;
 
 using Context = System.IntPtr;
@@ -18,7 +17,8 @@ namespace InputInterceptorNS {
 
         private static DllWrapper DllWrapper;
 
-        public static Boolean NeedDispose { get; private set; }
+        public static Boolean Initialized = DllWrapper != null;
+        public static Boolean Disposed => DllWrapper?.Disposed ?? true;
 
         public static Context CreateContext() => DllWrapper.CreateContext();
         public static void DestroyContext(Context context) => DllWrapper.DestroyContext(context);
@@ -39,14 +39,14 @@ namespace InputInterceptorNS {
 
         static InputInterceptor() {
             DllWrapper = null;
-            NeedDispose = false;
         }
 
         public static Boolean Initialize() {
+            if (Initialized)
+                return true;
             try {
-                Byte[] DllBytes = Environment.Is64BitProcess ? Resources.interception_x64 : Resources.interception_x86;
+                Byte[] DllBytes = Helpers.GetResource($"interception_x{(IntPtr.Size == 8 ? "64" : "86")}.dll");
                 DllWrapper = new DllWrapper(DllBytes);
-                NeedDispose = true;
                 return true;
             } catch (Exception exception) {
                 Console.WriteLine(exception);
@@ -55,9 +55,11 @@ namespace InputInterceptorNS {
         }
 
         public static Boolean Dispose() {
+            if (Disposed)
+                return true;
             try {
                 DllWrapper.Dispose();
-                NeedDispose = false;
+                DllWrapper = null;
                 return true;
             } catch (Exception exception) {
                 Console.WriteLine(exception);
@@ -69,38 +71,49 @@ namespace InputInterceptorNS {
             RegistryKey baseRegistryKey = Registry.LocalMachine.OpenSubKey("SYSTEM").OpenSubKey("CurrentControlSet").OpenSubKey("Services");
             RegistryKey keyboardRegistryKey = baseRegistryKey.OpenSubKey("keyboard");
             RegistryKey mouseRegistryKey = baseRegistryKey.OpenSubKey("mouse");
-            if (keyboardRegistryKey == null || mouseRegistryKey == null) return false;
-            if ((String)keyboardRegistryKey.GetValue("DisplayName", String.Empty) != "Keyboard Upper Filter Driver") return false;
-            if ((String)mouseRegistryKey.GetValue("DisplayName", String.Empty) != "Mouse Upper Filter Driver") return false;
+            if (keyboardRegistryKey == null || mouseRegistryKey == null)
+                return false;
+            if ((String)keyboardRegistryKey.GetValue("DisplayName", String.Empty) != "Keyboard Upper Filter Driver")
+                return false;
+            if ((String)mouseRegistryKey.GetValue("DisplayName", String.Empty) != "Mouse Upper Filter Driver")
+                return false;
             return true;
         }
 
         public static Boolean CheckAdministratorRights() {
-            return new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator) ? true : false;
+            WindowsIdentity windowsIdentity = WindowsIdentity.GetCurrent();
+            WindowsPrincipal windowsPrincipal = new WindowsPrincipal(windowsIdentity);
+            return windowsPrincipal.IsInRole(WindowsBuiltInRole.Administrator);
         }
 
-        public static Boolean InstallDriver() {
+        private static Boolean ExecuteInstaller(String arguments) {
             Boolean result = false;
             if (CheckAdministratorRights() && !CheckDriverInstalled()) {
                 String randomTempFileName = Path.GetTempFileName();
-                File.WriteAllBytes(randomTempFileName, Resources.install_interception);
                 try {
+                    File.WriteAllBytes(randomTempFileName, Helpers.GetResource("install_interception.exe"));
                     Process process = new Process();
                     process.StartInfo.FileName = randomTempFileName;
-                    process.StartInfo.Arguments = "/install";
+                    process.StartInfo.Arguments = arguments;
                     process.StartInfo.UseShellExecute = false;
                     process.StartInfo.CreateNoWindow = true;
                     process.Start();
                     process.WaitForExit();
                     result = process.ExitCode == 0;
+                    File.Delete(randomTempFileName);
                 } catch (Exception exception) {
                     Console.WriteLine(exception);
                 }
-                try {
-                    File.Delete(randomTempFileName);
-                } catch { }
             }
             return result;
+        }
+
+        public static Boolean InstallDriver() {
+            return ExecuteInstaller("/install");
+        }
+
+        public static Boolean UninstallDriver() {
+            return ExecuteInstaller("/uninstall");
         }
 
         public static List<DeviceData> GetDeviceList(Predicate predicate = null) {
@@ -114,10 +127,14 @@ namespace InputInterceptorNS {
             List<DeviceData> result = new List<DeviceData>();
             Char[] buffer = new Char[1024];
             GCHandle gcHandle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-            for (Device device = 1; device <= 20; device++) {
-                if (predicate == null ? IsInvalid(device) == false : predicate(device)) {
-                    UInt32 length = GetHardwareId(context, device, gcHandle.AddrOfPinnedObject(), (UInt32)buffer.Length);
-                    if (length > 0) result.Add(new DeviceData(device, new String(buffer, 0, (Int32)length)));
+            IntPtr bufferPtr = gcHandle.AddrOfPinnedObject();
+            for (Device device = 1; device <= 20; device += 1) {
+                if (predicate == null ? !IsInvalid(device) : predicate(device)) {
+                    UInt32 length = GetHardwareId(context, device, bufferPtr, (UInt32)buffer.Length);
+                    if (length > 0) {
+                        String name = new String(buffer, 0, (Int32)length);
+                        result.Add(new DeviceData(device, name));
+                    }
                 }
             }
             gcHandle.Free();

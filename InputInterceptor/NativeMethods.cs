@@ -5,22 +5,34 @@ namespace InputInterceptorNS {
 
     internal class NativeMethods {
 
-        [DllImport("kernel32.dll", CharSet = CharSet.Ansi, SetLastError = true)]
-        public static extern IntPtr LoadLibrary(String lpFileName);
+        private const String KERNEL32 = "kernel32.dll";
+        private const String USER32 = "user32.dll";
 
-        [DllImport("kernel32.dll", CharSet = CharSet.Ansi, SetLastError = true)]
-        public static extern IntPtr GetProcAddress(IntPtr hModule, String procName);
+        [DllImport(KERNEL32, SetLastError = true)]
+        public static extern IntPtr LoadLibrary(String lpLibFileName);
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern Boolean FreeLibrary(IntPtr hModule);
+        [DllImport(KERNEL32, SetLastError = true)]
+        public static extern Boolean FreeLibrary(IntPtr hLibModule);
 
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern Boolean GetCursorPos([Out] Win32Point lpPoint);
+        [DllImport(KERNEL32, SetLastError = true)]
+        public static extern IntPtr GetModuleHandle(String lpModuleName);
 
-        [DllImport("user32.dll", SetLastError = true)]
+        [DllImport(KERNEL32, SetLastError = true)]
+        public static extern IntPtr GetProcAddress(IntPtr hModule, String lpProcName);
+
+        [DllImport(KERNEL32, SetLastError = true)]
+        public static extern IntPtr GetCurrentProcess();
+
+        [DllImport(KERNEL32, SetLastError = true)]
+        public static extern Boolean IsWow64Process(IntPtr hProcess, out Boolean Wow64Process);
+
+        [DllImport(USER32, SetLastError = true)]
+        public static extern Boolean GetCursorPos(out Win32Point lpPoint);
+
+        [DllImport(USER32, SetLastError = true)]
         public static extern Boolean SetCursorPos(Int32 x, Int32 y);
 
-        [DllImport("user32.dll", SetLastError = true)]
+        [DllImport(USER32, SetLastError = true)]
         public static extern Int32 GetSystemMetrics(Int32 nIndex);
 
     }

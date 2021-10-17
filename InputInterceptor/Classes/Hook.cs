@@ -19,15 +19,16 @@ namespace InputInterceptorNS {
         public Predicate Predicate { get; private set; }
         public CallbackAction Callback { get; private set; }
         public Exception Exception { get; private set; }
-        public Boolean InterceptionActive { get; private set; }
-        public Boolean DeviceCaptureActive { get; private set; }
+        public Boolean Active { get; private set; }
         public Thread Thread { get; private set; }
 
-        public Boolean IsInitialized { get => this.Context != Context.Zero && this.Device != -1; }
-        public Boolean CanSimulateInput { get => this.Context != Context.Zero && (this.Device != -1 || this.RandomDevice != -1); }
-        public Boolean HasException { get => this.Exception != null; }
+        public Boolean IsInitialized => this.Context != Context.Zero && this.Device != -1;
+        public Boolean CanSimulateInput => this.Context != Context.Zero && (this.Device != -1 || this.RandomDevice != -1);
+        public Boolean HasException => this.Exception != null;
 
-        protected Device AnyDevice { get => this.Device != -1 ? this.Device : this.RandomDevice; }
+        protected Device AnyDevice => this.Device != -1 ? this.Device : this.RandomDevice;
+
+        protected abstract void CallbackWrapper(ref Stroke stroke);
 
         public Hook(Filter filterMode, Predicate predicate, CallbackAction callback) {
             Context context = InputInterceptor.CreateContext();
@@ -39,25 +40,16 @@ namespace InputInterceptorNS {
             this.Predicate = predicate;
             this.Callback = callback;
             this.Exception = null;
-            if (this.Context != IntPtr.Zero) {
-                if (this.Callback != null) {
-                    this.InterceptionActive = true;
-                    this.DeviceCaptureActive = false;
-                    this.Thread = new Thread(this.InterceptionMain);
-                    this.Thread.Priority = ThreadPriority.Highest;
-                    this.Thread.IsBackground = true;
-                    this.Thread.Start();
-                } else {
-                    this.InterceptionActive = false;
-                    this.DeviceCaptureActive = true;
-                    this.Thread = new Thread(this.DeviceCaptureMain);
-                    this.Thread.Priority = ThreadPriority.Lowest;
-                    this.Thread.IsBackground = true;
-                    this.Thread.Start();
-                }
+            if (this.Context != Context.Zero) {
+                this.Active = this.Callback != null;
+                this.Thread = new Thread(this.InterceptionMain);
+#if !NETSTANDARD1_3 && !NETSTANDARD1_4 && !NETSTANDARD1_5 && !NETSTANDARD1_6
+                this.Thread.Priority = this.Callback != null ? ThreadPriority.Highest : ThreadPriority.Normal;
+#endif
+                this.Thread.IsBackground = true;
+                this.Thread.Start();
             } else {
-                this.InterceptionActive = false;
-                this.DeviceCaptureActive = false;
+                this.Active = false;
                 this.Thread = null;
             }
         }
@@ -66,52 +58,28 @@ namespace InputInterceptorNS {
             InputInterceptor.SetFilter(this.Context, this.Predicate, this.FilterMode);
             Device device;
             Stroke stroke = new Stroke();
-            while (this.InterceptionActive) {
-                if (InputInterceptor.Receive(this.Context, device = InputInterceptor.WaitWithTimeout(this.Context, 100), ref stroke, 1) > 0) {
+            while (this.Active) {
+                device = InputInterceptor.WaitWithTimeout(this.Context, 100);
+                if (InputInterceptor.Receive(this.Context, device, ref stroke, 1) > 0) {
                     this.Device = device;
-                    if (this.InterceptionActive) {
+                    if (this.Active) {
                         try {
                             this.CallbackWrapper(ref stroke);
                         } catch (Exception exception) {
                             Console.WriteLine(exception);
                             this.Exception = exception;
-                            this.InterceptionActive = false;
+                            this.Active = false;
                         }
-                    } else {
-                        this.InterceptionActive = false;
                     }
                     InputInterceptor.Send(this.Context, device, ref stroke, 1);
                 }
             }
         }
-
-        private void DeviceCaptureMain() {
-            InputInterceptor.SetFilter(this.Context, this.Predicate, this.FilterMode);
-            Device device;
-            Stroke stroke = new Stroke();
-            while (this.DeviceCaptureActive) {
-                if (InputInterceptor.Receive(this.Context, device = InputInterceptor.WaitWithTimeout(this.Context, 100), ref stroke, 1) > 0) {
-                    if (this.Predicate(device)) {
-                        this.Device = device;
-                        this.DeviceCaptureActive = false;
-                    }
-                    InputInterceptor.Send(this.Context, device, ref stroke, 1);
-                }
-            }
-            InputInterceptor.DestroyContext(this.Context);
-            this.Context = InputInterceptor.CreateContext();
-        }
-
-        protected abstract void CallbackWrapper(ref Stroke stroke);
 
         public void Dispose() {
             if (this.Context != Context.Zero) {
-                if (this.InterceptionActive) {
-                    this.InterceptionActive = false;
-                    this.Thread.Join();
-                }
-                if (this.DeviceCaptureActive) {
-                    this.DeviceCaptureActive = false;
+                if (this.Active) {
+                    this.Active = false;
                     this.Thread.Join();
                 }
                 InputInterceptor.DestroyContext(this.Context);

@@ -2,18 +2,40 @@
 <package>
   <metadata>
     <id>InputInterceptor</id>
-    <version>1.0.7</version>
+    <version>2.0.0</version>
     <authors>0x2E757</authors>
     <owners>0x2E757</owners>
-    <licenseUrl>https://github.com/0x2E757/InputInterceptor/blob/master/LICENSE</licenseUrl>
+    <license type="expression">MIT</license>
     <repository type="git" url="https://github.com/0x2E757/InputInterceptor.git" branch="master" />
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Library for keyboard and mouse input interception and simulation</description>
     <copyright>Copyright 2019</copyright>
     <tags>inputinterceptor input interceptor intercept capture hook mouse keyboard keys buttons simulate simulation interception driver</tags>
+	<dependencies>
+      <group targetFramework="netstandard1.3">
+        <dependency id="Microsoft.Win32.Registry" version="5.0.0" />
+        <dependency id="System.Diagnostics.Process" version="4.3.0" />
+        <dependency id="System.Security.Principal.Windows" version="5.0.0" />
+        <dependency id="System.Threading.Thread" version="4.3.0" />
+      </group>
+      <group targetFramework="netstandard2.0">
+        <dependency id="Microsoft.Win32.Registry" version="5.0.0" />
+        <dependency id="System.Security.Principal.Windows" version="5.0.0" />
+      </group>
+    </dependencies>
   </metadata>
   <files>
-    <file src="InputInterceptor\bin\Release\*.dll" target="lib\net45" />
-    <file src="InputInterceptor\bin\Release\*.pdb" target="lib\net45" />
+    <file src="InputInterceptor\bin\Release\netstandard1.3\*.dll" target="lib\netstandard1.3" />
+    <file src="InputInterceptor\bin\Release\netstandard1.3\*.pdb" target="lib\netstandard1.3" />
+    <file src="InputInterceptor\bin\Release\netstandard1.4\*.dll" target="lib\netstandard1.4" />
+    <file src="InputInterceptor\bin\Release\netstandard1.4\*.pdb" target="lib\netstandard1.4" />
+    <file src="InputInterceptor\bin\Release\netstandard1.5\*.dll" target="lib\netstandard1.5" />
+    <file src="InputInterceptor\bin\Release\netstandard1.5\*.pdb" target="lib\netstandard1.5" />
+    <file src="InputInterceptor\bin\Release\netstandard1.6\*.dll" target="lib\netstandard1.6" />
+    <file src="InputInterceptor\bin\Release\netstandard1.6\*.pdb" target="lib\netstandard1.6" />
+    <file src="InputInterceptor\bin\Release\netstandard2.0\*.dll" target="lib\netstandard2.0" />
+    <file src="InputInterceptor\bin\Release\netstandard2.0\*.pdb" target="lib\netstandard2.0" />
+    <file src="InputInterceptor\bin\Release\netstandard2.1\*.dll" target="lib\netstandard2.1" />
+    <file src="InputInterceptor\bin\Release\netstandard2.1\*.pdb" target="lib\netstandard2.1" />
   </files>
 </package>

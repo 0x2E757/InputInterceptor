@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Filter = System.UInt16;
+
 namespace InputInterceptorNS {
 
     public enum KeyCode : UInt16 {
@@ -31,6 +33,7 @@ namespace InputInterceptorNS {
         OpenBracketBrace = 26,
         CloseBracketBrace = 27,
         Enter = 28,
+        NumpadEnter = 28,
         Control = 29,
         A = 30,
         S = 31,
@@ -56,8 +59,11 @@ namespace InputInterceptorNS {
         Comma = 51,
         Dot = 52,
         Slash = 53,
+        NumpadDivide = 53,
         RightShift = 54,
-        RightAlt = 56,
+        PrintScreen = 55,
+        NumpadAsterisk = 55,
+        Alt = 56,
         Space = 57,
         CapsLock = 58,
         F1 = 59,
@@ -70,39 +76,36 @@ namespace InputInterceptorNS {
         F8 = 66,
         F9 = 67,
         F10 = 68,
-        F11 = 87,
-        F12 = 88,
-        Up = 72,
-        Down = 80,
-        Right = 77,
-        Left = 75,
-        Home = 71,
-        End = 79,
-        Delete = 83,
-        PageUp = 73,
-        PageDown = 81,
-        Insert = 82,
-        PrintScreen = 55,
         NumLock = 69,
         ScrollLock = 70,
-        Menu = 93,
-        WindowsKey = 91,
-        NumpadDivide = 53,
-        NumpadAsterisk = 55,
+        Home = 71,
         Numpad7 = 71,
+        Up = 72,
         Numpad8 = 72,
+        PageUp = 73,
         Numpad9 = 73,
+        NumpadMinus = 74,
+        Left = 75,
         Numpad4 = 75,
         Numpad5 = 76,
+        Right = 77,
         Numpad6 = 77,
-        Numpad1 = 79,
-        Numpad2 = 80,
-        Numpad3 = 81,
-        Numpad0 = 82,
-        NumpadDelete = 83,
-        NumpadEnter = 28,
         NumpadPlus = 78,
-        NumpadMinus = 74,
+        End = 79,
+        Numpad1 = 79,
+        Down = 80,
+        Numpad2 = 80,
+        PageDown = 81,
+        Numpad3 = 81,
+        Insert = 82,
+        Numpad0 = 82,
+        Delete = 83,
+        NumpadDelete = 83,
+        F11 = 87,
+        F12 = 88,
+        LeftWindowsKey = 91,
+        RightWindowsKey = 92,
+        Menu = 93,
     }
 
     [Flags]
@@ -117,7 +120,7 @@ namespace InputInterceptorNS {
     }
 
     [Flags]
-    public enum KeyboardFilter : UInt16 {
+    public enum KeyboardFilter : Filter {
         None = 0x00,
         All = 0xFF,
         KeyDown = 0x01,
@@ -146,7 +149,7 @@ namespace InputInterceptorNS {
     }
 
     [Flags]
-    public enum MouseFilter : UInt16 {
+    public enum MouseFilter : Filter {
         None = 0x0000,
         All = 0xFFFF,
         LeftButtonDown = MouseState.LeftButtonDown,
