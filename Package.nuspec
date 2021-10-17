@@ -11,7 +11,7 @@
     <description>Library for keyboard and mouse input interception and simulation</description>
     <copyright>Copyright 2019</copyright>
     <tags>inputinterceptor input interceptor intercept capture hook mouse keyboard keys buttons simulate simulation interception driver</tags>
-	<dependencies>
+    <dependencies>
       <group targetFramework="netstandard1.3">
         <dependency id="Microsoft.Win32.Registry" version="5.0.0" />
         <dependency id="System.Diagnostics.Process" version="4.3.0" />
