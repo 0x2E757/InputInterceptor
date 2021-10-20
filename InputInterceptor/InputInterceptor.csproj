@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;netstandard1.4;netstandard1.5;netstandard1.6;netstandard2.0;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;netstandard2.0</TargetFrameworks>
     <RootNamespace>InputInterceptorNS</RootNamespace>
   </PropertyGroup>
 
@@ -19,9 +19,9 @@
 
   <ItemGroup Condition="$([MSBuild]::GetTargetFrameworkIdentifier($(TargetFramework))) == '.NETStandard'">
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" Condition="$([MSBuild]::VersionLessThan($(TargetFrameworkVersion), '2.0'))" />
-    <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" Condition="$([MSBuild]::VersionLessThan($(TargetFrameworkVersion), '2.0'))" />
-    <PackageReference Include="System.Threading.Thread" Version="4.3.0" Condition="$([MSBuild]::VersionLessThan($(TargetFrameworkVersion), '2.0'))" />
+    <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" Condition="$([MSBuild]::VersionLessThanOrEquals($(TargetFrameworkVersion), '1.3'))" />
+    <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" Condition="$([MSBuild]::VersionLessThanOrEquals($(TargetFrameworkVersion), '1.3'))" />
+    <PackageReference Include="System.Threading.Thread" Version="4.3.0" Condition="$([MSBuild]::VersionLessThanOrEquals($(TargetFrameworkVersion), '1.3'))" />
   </ItemGroup>
 
 </Project>

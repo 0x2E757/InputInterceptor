@@ -43,7 +43,7 @@ namespace InputInterceptorNS {
             if (this.Context != Context.Zero) {
                 this.Active = this.Callback != null;
                 this.Thread = new Thread(this.InterceptionMain);
-#if !NETSTANDARD1_3 && !NETSTANDARD1_4 && !NETSTANDARD1_5 && !NETSTANDARD1_6
+#if !NETSTANDARD1_3
                 this.Thread.Priority = this.Callback != null ? ThreadPriority.Highest : ThreadPriority.Normal;
 #endif
                 this.Thread.IsBackground = true;

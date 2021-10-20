@@ -2,7 +2,7 @@
 
 Library for keyboard and mouse input interception and simulation. Based on [interception driver](http://www.oblita.com/interception.html). Library will work only if the driver is intalled, however library contains installer and the driver can be installed by `InputInterceptor.InstallDriver()` call (`InputInterceptor.UninstallDriver()` for uninstall). Available as [NuGet package](https://www.nuget.org/packages/InputInterceptor/).
 
-Compatible with .NET Standard 1.3, 1.4, 1.5, 1.6, 2.0 and 2.1!
+Compatible with .NET Standard 1.3 and higher!
 
 ## Usage
 
