@@ -91,7 +91,7 @@ namespace InputInterceptorNS {
             if (CheckAdministratorRights() && !CheckDriverInstalled()) {
                 String randomTempFileName = Path.GetTempFileName();
                 try {
-                    File.WriteAllBytes(randomTempFileName, Helpers.GetResource("install_interception.exe"));
+                    File.WriteAllBytes(randomTempFileName, Helpers.GetResource("install-interception.exe"));
                     Process process = new Process();
                     process.StartInfo.FileName = randomTempFileName;
                     process.StartInfo.Arguments = arguments;
