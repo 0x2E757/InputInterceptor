@@ -118,7 +118,7 @@ namespace InputInterceptorNS {
             QuestionMark = new KeyData { Code = KeyCode.Slash, Shift = true };
         }
 
-        public KeyboardHook(KeyboardFilter filter = KeyboardFilter.All, CallbackAction callback = null) :
+        public KeyboardHook(KeyboardFilter filter = KeyboardFilter.None, CallbackAction callback = null) :
             base((Filter)filter, InputInterceptor.IsKeyboard, callback) { }
 
         public KeyboardHook(CallbackAction callback) :

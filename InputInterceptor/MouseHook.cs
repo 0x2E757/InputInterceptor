@@ -18,7 +18,7 @@ namespace InputInterceptorNS {
             PrimaryScreenHeight = NativeMethods.GetSystemMetrics(SM_CYSCREEN);
         }
 
-        public MouseHook(MouseFilter filter = MouseFilter.All, CallbackAction callback = null) :
+        public MouseHook(MouseFilter filter = MouseFilter.None, CallbackAction callback = null) :
             base((Filter)filter, InputInterceptor.IsMouse, callback) { }
 
         public MouseHook(CallbackAction callback) :

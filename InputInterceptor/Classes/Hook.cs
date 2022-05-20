@@ -41,7 +41,7 @@ namespace InputInterceptorNS {
             this.Callback = callback;
             this.Exception = null;
             if (this.Context != Context.Zero) {
-                this.Active = this.Callback != null;
+                this.Active = filterMode != 0 || callback != null;
                 this.Thread = new Thread(this.InterceptionMain);
 #if !NETSTANDARD1_3
                 this.Thread.Priority = this.Callback != null ? ThreadPriority.Highest : ThreadPriority.Normal;
@@ -62,7 +62,7 @@ namespace InputInterceptorNS {
                 device = InputInterceptor.WaitWithTimeout(this.Context, 100);
                 if (InputInterceptor.Receive(this.Context, device, ref stroke, 1) > 0) {
                     this.Device = device;
-                    if (this.Active) {
+                    if (this.Active && this.Callback != null) {
                         try {
                             this.CallbackWrapper(ref stroke);
                         } catch (Exception exception) {
