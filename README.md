@@ -74,46 +74,64 @@ Boolean HasException => this.Exception != null;
 ## Example Application
 
 ```C#
-void Main(string[] args) {
-    // Check if the driver is installed
+using InputInterceptorNS;
+
+if (InitializeDriver()) {
+    MouseHook mouseHook = new MouseHook(MouseCallback);
+    KeyboardHook keyboardHook = new KeyboardHook(KeyboardCallback);
+    Console.WriteLine("Hooks enabled. Press any key to release.");
+    Console.ReadKey();
+    keyboardHook.Dispose();
+    mouseHook.Dispose();
+} else {
+    InstallDriver();
+}
+
+Console.WriteLine("End of program. Press any key.");
+Console.ReadKey();
+
+void MouseCallback(ref MouseStroke mouseStroke) {
+    Console.WriteLine($"{mouseStroke.X} {mouseStroke.Y} {mouseStroke.Flags} {mouseStroke.State} {mouseStroke.Information}"); // Mouse XY coordinates are raw
+    // Invert mouse X
+    //mouseStroke.X = -mouseStroke.X;
+    // Invert mouse Y
+    //mouseStroke.Y = -mouseStroke.Y;
+}
+
+void KeyboardCallback(ref KeyStroke keyStroke) {
+    Console.WriteLine($"{keyStroke.Code} {keyStroke.State} {keyStroke.Information}");
+    // Button swap
+    //keyStroke.Code = keyStroke.Code switch {
+    //    KeyCode.A => KeyCode.B,
+    //    KeyCode.B => KeyCode.A,
+    //    _ => keyStroke.Code,
+    //};
+}
+
+Boolean InitializeDriver() {
     if (InputInterceptor.CheckDriverInstalled()) {
         Console.WriteLine("Input interceptor seems to be installed.");
-        // Generate a temporary dll for communication with the driver
         if (InputInterceptor.Initialize()) {
             Console.WriteLine("Input interceptor successfully initialized.");
-            // Create simple hooks with outputting all actions to console 
-            MouseHook mouseHook = new MouseHook((ref MouseStroke mouseStroke) => {
-                Console.WriteLine($"{mouseStroke.X} {mouseStroke.Y} {mouseStroke.Flags} {mouseStroke.State} {mouseStroke.Information}"); // Mouse XY coordinates are raw
-            });
-            KeyboardHook keyboardHook = new KeyboardHook((ref KeyStroke keyStroke) => {
-                Console.WriteLine($"{keyStroke.Code} {keyStroke.State} {keyStroke.Information}");
-            });
-            Console.WriteLine("Hooks enabled. Press any key to release.");
-            Console.ReadKey();
-            // Dispose internal filters
-            keyboardHook.Dispose();
-            mouseHook.Dispose();
-            // Cleanup system from temporary dll
-            InputInterceptor.Dispose();
-        } else {
-            Console.WriteLine("Input interceptor initialization failed.");
-        }
-    } else {
-        // Try to install the driver if it's not
-        Console.WriteLine("Input interceptor not installed.");
-        if (InputInterceptor.CheckAdministratorRights()) {
-            Console.WriteLine("Installing...");
-            if (InputInterceptor.InstallDriver()) {
-                Console.WriteLine("Done! Restart your computer.");
-            } else {
-                Console.WriteLine("Something... gone... wrong... :(");
-            }
-        } else {
-            Console.WriteLine("Restart program with administrator rights so it will be installed.");
+            return true;
         }
     }
-    Console.WriteLine("End of program. Press any key.");
-    Console.ReadKey();
+    Console.WriteLine("Input interceptor initialization failed.");
+    return false;
+}
+
+void InstallDriver() {
+    Console.WriteLine("Input interceptor not installed.");
+    if (InputInterceptor.CheckAdministratorRights()) {
+        Console.WriteLine("Installing...");
+        if (InputInterceptor.InstallDriver()) {
+            Console.WriteLine("Done! Restart your computer.");
+        } else {
+            Console.WriteLine("Something... gone... wrong... :(");
+        }
+    } else {
+        Console.WriteLine("Restart program with administrator rights so it will be installed.");
+    }
 }
 ```
 
