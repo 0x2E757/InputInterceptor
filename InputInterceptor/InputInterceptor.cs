@@ -88,7 +88,7 @@ namespace InputInterceptorNS {
 
         private static Boolean ExecuteInstaller(String arguments) {
             Boolean result = false;
-            if (CheckAdministratorRights() && !CheckDriverInstalled()) {
+            if (CheckAdministratorRights()) {
                 String randomTempFileName = Path.GetTempFileName();
                 try {
                     File.WriteAllBytes(randomTempFileName, Helpers.GetResource("install-interception.exe"));
@@ -108,12 +108,13 @@ namespace InputInterceptorNS {
             return result;
         }
 
-        public static Boolean InstallDriver() {
-            return ExecuteInstaller("/install");
+        public static Boolean InstallDriver()
+        {
+            return !CheckDriverInstalled() && ExecuteInstaller("/install");
         }
 
         public static Boolean UninstallDriver() {
-            return ExecuteInstaller("/uninstall");
+            return CheckDriverInstalled() && ExecuteInstaller("/uninstall");
         }
 
         public static List<DeviceData> GetDeviceList(Predicate predicate = null) {
