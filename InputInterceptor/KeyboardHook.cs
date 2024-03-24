@@ -4,11 +4,14 @@ using System.Threading;
 
 using Filter = System.UInt16;
 
-namespace InputInterceptorNS {
+namespace InputInterceptorNS
+{
 
-    public class KeyboardHook : Hook<KeyStroke> {
+    public class KeyboardHook : Hook<KeyStroke>
+    {
 
-        private struct KeyData {
+        private struct KeyData
+        {
 
             public KeyCode Code;
             public Boolean Shift;
@@ -18,7 +21,8 @@ namespace InputInterceptorNS {
         private static readonly Dictionary<Char, KeyData> KeyDictionary;
         private static readonly KeyData QuestionMark;
 
-        static KeyboardHook() {
+        static KeyboardHook()
+        {
             KeyDictionary = new Dictionary<Char, KeyData>();
             KeyDictionary.Add('`', new KeyData { Code = KeyCode.Tilde });
             KeyDictionary.Add('1', new KeyData { Code = KeyCode.One });
@@ -119,17 +123,22 @@ namespace InputInterceptorNS {
         }
 
         public KeyboardHook(KeyboardFilter filter = KeyboardFilter.None, CallbackAction callback = null) :
-            base((Filter)filter, InputInterceptor.IsKeyboard, callback) { }
+            base((Filter)filter, InputInterceptor.IsKeyboard, callback)
+        { }
 
         public KeyboardHook(CallbackAction callback) :
-            base((Filter)KeyboardFilter.All, InputInterceptor.IsKeyboard, callback) { }
+            base((Filter)KeyboardFilter.All, InputInterceptor.IsKeyboard, callback)
+        { }
 
-        protected override void CallbackWrapper(ref Stroke stroke) {
+        protected override void CallbackWrapper(ref Stroke stroke)
+        {
             this.Callback(ref stroke.Key);
         }
 
-        public Boolean SetKeyState(KeyCode code, KeyState state) {
-            if (this.CanSimulateInput) {
+        public Boolean SetKeyState(KeyCode code, KeyState state)
+        {
+            if (this.CanSimulateInput)
+            {
                 Stroke stroke = new Stroke();
                 stroke.Key.Code = code;
                 stroke.Key.State = state;
@@ -138,33 +147,43 @@ namespace InputInterceptorNS {
             return false;
         }
 
-        public Boolean SimulateKeyDown(KeyCode code) {
+        public Boolean SimulateKeyDown(KeyCode code)
+        {
             return this.SetKeyState(code, KeyState.Down);
         }
 
-        public Boolean SimulateKeyUp(KeyCode code) {
+        public Boolean SimulateKeyUp(KeyCode code)
+        {
             return this.SetKeyState(code, KeyState.Up);
         }
 
-        public Boolean SimulateKeyPress(KeyCode code, Int32 releaseDelay = 75) {
-            if (this.SimulateKeyDown(code)) {
+        public Boolean SimulateKeyPress(KeyCode code, Int32 releaseDelay = 75)
+        {
+            if (this.SimulateKeyDown(code))
+            {
                 Thread.Sleep(releaseDelay);
                 return this.SimulateKeyUp(code);
             }
             return false;
         }
 
-        public Boolean SimulateInput(String text, Int32 delayBetweenKeyPresses = 50, Int32 releaseDelay = 75) {
+        public Boolean SimulateInput(String text, Int32 delayBetweenKeyPresses = 50, Int32 releaseDelay = 75)
+        {
             Boolean shiftDown = false;
-            foreach (Char letter in text) {
+            foreach (Char letter in text)
+            {
                 KeyData keyData;
                 if (!KeyDictionary.TryGetValue(letter, out keyData))
                     keyData = QuestionMark;
-                if (keyData.Shift != shiftDown) {
-                    if (keyData.Shift) {
+                if (keyData.Shift != shiftDown)
+                {
+                    if (keyData.Shift)
+                    {
                         if (!this.SetKeyState(KeyCode.LeftShift, KeyState.Down))
                             return false;
-                    } else {
+                    }
+                    else
+                    {
                         if (!this.SetKeyState(KeyCode.LeftShift, KeyState.Up))
                             return false;
                     }
@@ -174,7 +193,8 @@ namespace InputInterceptorNS {
                     return false;
                 Thread.Sleep(delayBetweenKeyPresses);
             }
-            if (shiftDown) {
+            if (shiftDown)
+            {
                 if (!this.SetKeyState(KeyCode.LeftShift, KeyState.Up))
                     return false;
             }

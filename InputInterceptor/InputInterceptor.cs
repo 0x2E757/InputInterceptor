@@ -1,19 +1,20 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
-using Microsoft.Win32;
-
 using Context = System.IntPtr;
 using Device = System.Int32;
 using Filter = System.UInt16;
 using Precedence = System.Int32;
 
-namespace InputInterceptorNS {
+namespace InputInterceptorNS
+{
 
-    public static class InputInterceptor {
+    public static class InputInterceptor
+    {
 
         private static DllWrapper DllWrapper;
 
@@ -37,37 +38,47 @@ namespace InputInterceptorNS {
         public static Boolean IsKeyboard(Device device) => DllWrapper.IsKeyboard(device) != 0;
         public static Boolean IsMouse(Device device) => DllWrapper.IsMouse(device) != 0;
 
-        static InputInterceptor() {
+        static InputInterceptor()
+        {
             DllWrapper = null;
         }
 
-        public static Boolean Initialize() {
+        public static Boolean Initialize()
+        {
             if (Initialized)
                 return true;
-            try {
+            try
+            {
                 Byte[] DllBytes = Helpers.GetResource($"interception_x{(IntPtr.Size == 8 ? "64" : "86")}.dll");
                 DllWrapper = new DllWrapper(DllBytes);
                 return true;
-            } catch (Exception exception) {
+            }
+            catch (Exception exception)
+            {
                 Console.WriteLine(exception);
                 return false;
             }
         }
 
-        public static Boolean Dispose() {
+        public static Boolean Dispose()
+        {
             if (Disposed)
                 return true;
-            try {
+            try
+            {
                 DllWrapper.Dispose();
                 DllWrapper = null;
                 return true;
-            } catch (Exception exception) {
+            }
+            catch (Exception exception)
+            {
                 Console.WriteLine(exception);
                 return false;
             }
         }
 
-        public static Boolean CheckDriverInstalled() {
+        public static Boolean CheckDriverInstalled()
+        {
             RegistryKey baseRegistryKey = Registry.LocalMachine.OpenSubKey("SYSTEM").OpenSubKey("CurrentControlSet").OpenSubKey("Services");
             RegistryKey keyboardRegistryKey = baseRegistryKey.OpenSubKey("keyboard");
             RegistryKey mouseRegistryKey = baseRegistryKey.OpenSubKey("mouse");
@@ -80,17 +91,21 @@ namespace InputInterceptorNS {
             return true;
         }
 
-        public static Boolean CheckAdministratorRights() {
+        public static Boolean CheckAdministratorRights()
+        {
             WindowsIdentity windowsIdentity = WindowsIdentity.GetCurrent();
             WindowsPrincipal windowsPrincipal = new WindowsPrincipal(windowsIdentity);
             return windowsPrincipal.IsInRole(WindowsBuiltInRole.Administrator);
         }
 
-        private static Boolean ExecuteInstaller(String arguments) {
+        private static Boolean ExecuteInstaller(String arguments)
+        {
             Boolean result = false;
-            if (CheckAdministratorRights()) {
+            if (CheckAdministratorRights())
+            {
                 String randomTempFileName = Path.GetTempFileName();
-                try {
+                try
+                {
                     File.WriteAllBytes(randomTempFileName, Helpers.GetResource("install-interception.exe"));
                     Process process = new Process();
                     process.StartInfo.FileName = randomTempFileName;
@@ -101,7 +116,9 @@ namespace InputInterceptorNS {
                     process.WaitForExit();
                     result = process.ExitCode == 0;
                     File.Delete(randomTempFileName);
-                } catch (Exception exception) {
+                }
+                catch (Exception exception)
+                {
                     Console.WriteLine(exception);
                 }
             }
@@ -113,26 +130,32 @@ namespace InputInterceptorNS {
             return !CheckDriverInstalled() && ExecuteInstaller("/install");
         }
 
-        public static Boolean UninstallDriver() {
+        public static Boolean UninstallDriver()
+        {
             return CheckDriverInstalled() && ExecuteInstaller("/uninstall");
         }
 
-        public static List<DeviceData> GetDeviceList(Predicate predicate = null) {
+        public static List<DeviceData> GetDeviceList(Predicate predicate = null)
+        {
             Context context = CreateContext();
             List<DeviceData> result = GetDeviceList(context, predicate);
             DestroyContext(context);
             return result;
         }
 
-        public static List<DeviceData> GetDeviceList(Context context, Predicate predicate = null) {
+        public static List<DeviceData> GetDeviceList(Context context, Predicate predicate = null)
+        {
             List<DeviceData> result = new List<DeviceData>();
             Char[] buffer = new Char[1024];
             GCHandle gcHandle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
             IntPtr bufferPtr = gcHandle.AddrOfPinnedObject();
-            for (Device device = 1; device <= 20; device += 1) {
-                if (predicate == null ? !IsInvalid(device) : predicate(device)) {
+            for (Device device = 1; device <= 20; device += 1)
+            {
+                if (predicate == null ? !IsInvalid(device) : predicate(device))
+                {
                     UInt32 length = GetHardwareId(context, device, bufferPtr, (UInt32)buffer.Length);
-                    if (length > 0) {
+                    if (length > 0)
+                    {
                         String name = new String(buffer, 0, (Int32)length);
                         result.Add(new DeviceData(device, name));
                     }

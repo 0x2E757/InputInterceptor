@@ -6,12 +6,14 @@ using Device = System.Int32;
 using Filter = System.UInt16;
 using Precedence = System.Int32;
 
-namespace InputInterceptorNS {
+namespace InputInterceptorNS
+{
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate Boolean Predicate(Device device);
 
-    internal class InterceptionMethods {
+    internal class InterceptionMethods
+    {
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate Context CreateContext();

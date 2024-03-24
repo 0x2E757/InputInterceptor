@@ -1,9 +1,11 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace InputInterceptorNS {
+namespace InputInterceptorNS
+{
 
     [StructLayout(LayoutKind.Explicit)]
-    public struct Stroke {
+    public struct Stroke
+    {
 
         [FieldOffset(0)]
         public MouseStroke Mouse;

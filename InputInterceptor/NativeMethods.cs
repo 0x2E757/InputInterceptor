@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace InputInterceptorNS {
+namespace InputInterceptorNS
+{
 
-    internal class NativeMethods {
+    internal class NativeMethods
+    {
 
         private const String KERNEL32 = "kernel32.dll";
         private const String USER32 = "user32.dll";

@@ -2,9 +2,11 @@
 
 using Filter = System.UInt16;
 
-namespace InputInterceptorNS {
+namespace InputInterceptorNS
+{
 
-    public enum KeyCode : UInt16 {
+    public enum KeyCode : UInt16
+    {
         Escape = 1,
         One = 2,
         Two = 3,
@@ -109,7 +111,8 @@ namespace InputInterceptorNS {
     }
 
     [Flags]
-    public enum KeyState : UInt16 {
+    public enum KeyState : UInt16
+    {
         Down = 0x00,
         Up = 0x01,
         E0 = 0x02,
@@ -120,7 +123,8 @@ namespace InputInterceptorNS {
     }
 
     [Flags]
-    public enum KeyboardFilter : Filter {
+    public enum KeyboardFilter : Filter
+    {
         None = 0x00,
         All = 0xFF,
         KeyDown = 0x01,
@@ -133,7 +137,8 @@ namespace InputInterceptorNS {
     }
 
     [Flags]
-    public enum MouseState : UInt16 {
+    public enum MouseState : UInt16
+    {
         LeftButtonDown = 0x001,
         LeftButtonUp = 0x002,
         RightButtonDown = 0x004,
@@ -149,7 +154,8 @@ namespace InputInterceptorNS {
     }
 
     [Flags]
-    public enum MouseFilter : Filter {
+    public enum MouseFilter : Filter
+    {
         None = 0x0000,
         All = 0xFFFF,
         LeftButtonDown = MouseState.LeftButtonDown,
@@ -168,7 +174,8 @@ namespace InputInterceptorNS {
     }
 
     [Flags]
-    public enum MouseFlags : UInt16 {
+    public enum MouseFlags : UInt16
+    {
         MoveRelative = 0x000,
         MoveAbsolute = 0x001,
         VirtualDesktop = 0x002,

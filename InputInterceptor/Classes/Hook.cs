@@ -6,9 +6,11 @@ using Context = System.IntPtr;
 using Device = System.Int32;
 using Filter = System.UInt16;
 
-namespace InputInterceptorNS {
+namespace InputInterceptorNS
+{
 
-    public abstract class Hook<TCallbackStroke> : IDisposable {
+    public abstract class Hook<TCallbackStroke> : IDisposable
+    {
 
         public delegate void CallbackAction(ref TCallbackStroke stroke);
 
@@ -30,7 +32,8 @@ namespace InputInterceptorNS {
 
         protected abstract void CallbackWrapper(ref Stroke stroke);
 
-        public Hook(Filter filterMode, Predicate predicate, CallbackAction callback) {
+        public Hook(Filter filterMode, Predicate predicate, CallbackAction callback)
+        {
             Context context = InputInterceptor.CreateContext();
             List<DeviceData> devices = InputInterceptor.GetDeviceList(context, predicate);
             this.Context = context;
@@ -40,7 +43,8 @@ namespace InputInterceptorNS {
             this.Predicate = predicate;
             this.Callback = callback;
             this.Exception = null;
-            if (this.Context != Context.Zero) {
+            if (this.Context != Context.Zero)
+            {
                 this.Active = filterMode != 0 || callback != null;
                 this.Thread = new Thread(this.InterceptionMain);
 #if !NETSTANDARD1_3
@@ -48,24 +52,33 @@ namespace InputInterceptorNS {
 #endif
                 this.Thread.IsBackground = true;
                 this.Thread.Start();
-            } else {
+            }
+            else
+            {
                 this.Active = false;
                 this.Thread = null;
             }
         }
 
-        private void InterceptionMain() {
+        private void InterceptionMain()
+        {
             InputInterceptor.SetFilter(this.Context, this.Predicate, this.FilterMode);
             Device device;
             Stroke stroke = new Stroke();
-            while (this.Active) {
+            while (this.Active)
+            {
                 device = InputInterceptor.WaitWithTimeout(this.Context, 100);
-                if (InputInterceptor.Receive(this.Context, device, ref stroke, 1) > 0) {
+                if (InputInterceptor.Receive(this.Context, device, ref stroke, 1) > 0)
+                {
                     this.Device = device;
-                    if (this.Active && this.Callback != null) {
-                        try {
+                    if (this.Active && this.Callback != null)
+                    {
+                        try
+                        {
                             this.CallbackWrapper(ref stroke);
-                        } catch (Exception exception) {
+                        }
+                        catch (Exception exception)
+                        {
                             Console.WriteLine(exception);
                             this.Exception = exception;
                             this.Active = false;
@@ -76,9 +89,12 @@ namespace InputInterceptorNS {
             }
         }
 
-        public void Dispose() {
-            if (this.Context != Context.Zero) {
-                if (this.Active) {
+        public void Dispose()
+        {
+            if (this.Context != Context.Zero)
+            {
+                if (this.Active)
+                {
                     this.Active = false;
                     this.Thread.Join();
                 }

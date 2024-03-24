@@ -2,9 +2,11 @@
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace InputInterceptorNS {
+namespace InputInterceptorNS
+{
 
-    internal class DllWrapper : IDisposable {
+    internal class DllWrapper : IDisposable
+    {
 
         private readonly String DllTempName;
         private readonly IntPtr DllPointer;
@@ -26,7 +28,8 @@ namespace InputInterceptorNS {
 
         public Boolean Disposed;
 
-        public DllWrapper(Byte[] DllBytes) {
+        public DllWrapper(Byte[] DllBytes)
+        {
             this.DllTempName = Path.GetTempFileName();
             File.WriteAllBytes(this.DllTempName, DllBytes);
             this.DllPointer = NativeMethods.LoadLibrary(this.DllTempName);
@@ -47,19 +50,23 @@ namespace InputInterceptorNS {
             this.Disposed = false;
         }
 
-        ~DllWrapper() {
+        ~DllWrapper()
+        {
             this.Dispose();
         }
 
-        public void Dispose() {
-            if (!this.Disposed) {
+        public void Dispose()
+        {
+            if (!this.Disposed)
+            {
                 NativeMethods.FreeLibrary(this.DllPointer);
                 File.Delete(this.DllTempName);
                 this.Disposed = true;
             }
         }
 
-        private TDelegate GetFunction<TDelegate>(String procedureName) {
+        private TDelegate GetFunction<TDelegate>(String procedureName)
+        {
             IntPtr procedureAddress = NativeMethods.GetProcAddress(this.DllPointer, procedureName);
             return Marshal.GetDelegateForFunctionPointer<TDelegate>(procedureAddress);
         }

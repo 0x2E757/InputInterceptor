@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace InputInterceptorNS {
+namespace InputInterceptorNS
+{
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct MouseStroke {
+    public struct MouseStroke
+    {
 
         public MouseState State;
         public MouseFlags Flags;
